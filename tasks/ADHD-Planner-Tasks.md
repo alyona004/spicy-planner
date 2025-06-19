@@ -122,11 +122,20 @@
 - `src/app/design/page.tsx` — Added TaskForm demo section for live preview and testing
 
 ### 3.4 Task Card Component
-- [ ] Design individual task card with all properties
-- [ ] Implement completion toggle functionality
-- [ ] Add visual indicators for energy levels and time blocks
-- [ ] Create responsive card layout
-- [ ] Add hover states and interactions
+- [x] Design individual task card with all properties (except created_time)
+- [x] Implement completion toggle functionality
+- [x] Add visual indicators for energy levels and time blocks
+- [x] Create responsive card layout
+- [x] Add hover states and interactions
+
+**Files Created/Modified:**
+- `src/components/adhd-planner/task-card.tsx` — TaskCard component displaying title, state, block, energy, and type with:
+  - ADHD/autistic-friendly design
+  - Completion toggle (checkbox, strikethrough, faded, Done badge)
+  - Visually distinct badge colors for energy and time block, with accessibility labels
+  - Fully responsive layout: flex, wrapping, spacing, and mobile-friendly touch targets
+  - Subtle, accessible hover and active states for card
+- `src/app/design/page.tsx` — TaskCard demo section with interactive completion toggle and visual indicators
 
 ### 3.5 Task List/Grid Component
 - [ ] Create container for displaying all tasks

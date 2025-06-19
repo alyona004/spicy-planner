@@ -10,6 +10,9 @@ import { Divider } from "@/components/ui/divider";
 import { Section } from "@/components/ui/section";
 import { Tag } from "@/components/ui/tag";
 import { TaskForm } from "@/components/adhd-planner/task-form";
+import { TaskCard } from "@/components/adhd-planner/task-card";
+import type { Task } from "@/types/task";
+import { useState } from "react";
 
 const buttonVariants = [
   { variant: "default", label: "Default" },
@@ -38,6 +41,21 @@ export default function DesignDemo() {
 
   const handleTaskCancel = () => {
     console.log("Task creation cancelled");
+  };
+
+  const [demoTask, setDemoTask] = useState<Task>({
+    id: "1",
+    title: "Write project update for team",
+    state: "pending",
+    block: "morning",
+    energy: "medium",
+    type: "daily",
+    created_time: new Date().toISOString(),
+  });
+
+  const handleToggleComplete = (id: string, done: boolean) => {
+    setDemoTask((prev) => ({ ...prev, state: done ? "done" : "pending" }));
+    console.log(`Task ${id} marked as ${done ? "done" : "pending"}`);
   };
 
   return (
@@ -188,6 +206,17 @@ export default function DesignDemo() {
                 <Tag variant="muted">Muted</Tag>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Task Card Demo Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Task Card</h2>
+          <div className="space-y-4">
+            <p className="text-foreground/70">
+              Demo of the TaskCard component with all properties and completion toggle.
+            </p>
+            <TaskCard task={demoTask} onToggleComplete={handleToggleComplete} />
           </div>
         </section>
 
