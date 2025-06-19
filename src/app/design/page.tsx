@@ -11,8 +11,9 @@ import { Section } from "@/components/ui/section";
 import { Tag } from "@/components/ui/tag";
 import { TaskForm } from "@/components/adhd-planner/task-form";
 import { TaskCard } from "@/components/adhd-planner/task-card";
+import { TaskList } from "@/components/adhd-planner/task-list";
 import type { Task } from "@/types/task";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const buttonVariants = [
   { variant: "default", label: "Default" },
@@ -57,6 +58,70 @@ export default function DesignDemo() {
     setDemoTask((prev) => ({ ...prev, state: done ? "done" : "pending" }));
     console.log(`Task ${id} marked as ${done ? "done" : "pending"}`);
   };
+
+  const [demoTasks, setDemoTasks] = useState<Task[]>([
+    {
+      id: "1",
+      title: "Write project update for team",
+      state: "pending",
+      block: "morning",
+      energy: "medium",
+      type: "daily",
+      created_time: new Date().toISOString(),
+    },
+    {
+      id: "2",
+      title: "Take a walk outside",
+      state: "done",
+      block: "afternoon",
+      energy: "high",
+      type: "one-time",
+      created_time: new Date().toISOString(),
+    },
+    {
+      id: "3",
+      title: "Read a chapter of a book",
+      state: "pending",
+      block: "evening",
+      energy: "low",
+      type: "daily",
+      created_time: new Date().toISOString(),
+    },
+  ]);
+
+  const handleListToggleComplete = (id: string, done: boolean) => {
+    setDemoTasks(tasks => tasks.map(task =>
+      task.id === id ? { ...task, state: done ? "done" : "pending" } : task
+    ));
+    console.log(`Task ${id} marked as ${done ? "done" : "pending"}`);
+  };
+
+  const [taskListView, setTaskListView] = useState<'list' | 'grid'>('list');
+
+  const [energyFilters, setEnergyFilters] = useState<('high' | 'medium' | 'low')[]>([]);
+
+  const handleEnergyFilterToggle = (level: 'high' | 'medium' | 'low') => {
+    setEnergyFilters(filters =>
+      filters.includes(level)
+        ? filters.filter(f => f !== level)
+        : [...filters, level]
+    );
+  };
+
+  const filteredTasks = energyFilters.length
+    ? demoTasks.filter(task => energyFilters.includes(task.energy))
+    : demoTasks;
+
+  const dopamineIcons = [
+    "🎉", "🚀", "✨", "🦄", "🌈", "🔥", "🍀", "🥳", "💡", "🏆"
+  ];
+  function getRandomIcon() {
+    return dopamineIcons[Math.floor(Math.random() * dopamineIcons.length)];
+  }
+  const [addTaskIcon, setAddTaskIcon] = useState<string | null>(null);
+  useEffect(() => {
+    setAddTaskIcon(getRandomIcon());
+  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -231,6 +296,133 @@ export default function DesignDemo() {
               onSubmit={handleTaskSubmit}
               onCancel={handleTaskCancel}
             />
+          </div>
+        </section>
+
+        {/* Task List Demo Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Task List</h2>
+          <div className="space-y-4">
+            <p className="text-foreground/70">
+              Demo of the TaskList component with multiple tasks and interactive completion toggles.
+            </p>
+            {/* Tab Bar */}
+            <div className="flex gap-2 mb-4">
+              <button
+                type="button"
+                className="px-4 py-1 rounded-full text-sm font-semibold bg-primary text-white shadow focus:outline-none focus:ring-2 focus:ring-primary"
+                aria-current="page"
+              >
+                Today
+              </button>
+              <button
+                type="button"
+                className="px-4 py-1 rounded-full text-sm font-semibold bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                disabled
+                aria-disabled="true"
+              >
+                Week
+              </button>
+              <button
+                type="button"
+                className="px-4 py-1 rounded-full text-sm font-semibold bg-muted text-muted-foreground cursor-not-allowed opacity-60"
+                disabled
+                aria-disabled="true"
+              >
+                Goals
+              </button>
+            </div>
+            {/* Energy Filter Controls */}
+            <div className="flex gap-2 mb-2">
+              <button
+                type="button"
+                className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${energyFilters.includes('high') ? 'bg-red-500 text-white border-red-500' : 'bg-muted text-foreground'}`}
+                onClick={() => handleEnergyFilterToggle('high')}
+                aria-pressed={energyFilters.includes('high')}
+              >
+                🔥 High
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${energyFilters.includes('medium') ? 'bg-yellow-400 text-foreground border-yellow-400' : 'bg-muted text-foreground'}`}
+                onClick={() => handleEnergyFilterToggle('medium')}
+                aria-pressed={energyFilters.includes('medium')}
+              >
+                ⚡ Medium
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${energyFilters.includes('low') ? 'bg-blue-400 text-white border-blue-400' : 'bg-muted text-foreground'}`}
+                onClick={() => handleEnergyFilterToggle('low')}
+                aria-pressed={energyFilters.includes('low')}
+              >
+                🧊 Low
+              </button>
+            </div>
+            {/* + Add Task Button */}
+            <div className="mb-2">
+              <button
+                type="button"
+                className="px-4 py-2 rounded-full bg-primary text-white font-bold text-base shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary transition flex items-center gap-2"
+                onClick={() => console.log('Add Task clicked')}
+                aria-label="Add Task"
+              >
+                {addTaskIcon && <span aria-hidden>{addTaskIcon}</span>}
+                Add Task
+              </button>
+            </div>
+            {/* End + Add Task Button */}
+            <div className="flex gap-2 mb-2">
+              <button
+                type="button"
+                className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${taskListView === 'list' ? 'bg-primary text-white' : 'bg-muted text-foreground'}`}
+                onClick={() => setTaskListView('list')}
+                aria-pressed={taskListView === 'list'}
+              >
+                List View
+              </button>
+              <button
+                type="button"
+                className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${taskListView === 'grid' ? 'bg-primary text-white' : 'bg-muted text-foreground'}`}
+                onClick={() => setTaskListView('grid')}
+                aria-pressed={taskListView === 'grid'}
+              >
+                Grid View
+              </button>
+            </div>
+            <TaskList tasks={filteredTasks} onToggleComplete={handleListToggleComplete} view={taskListView} />
+          </div>
+        </section>
+
+        {/* Task List Empty State Demo Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Task List (Empty State)</h2>
+          <div className="space-y-4">
+            <p className="text-foreground/70">
+              Demo of the TaskList component when there are no tasks.
+            </p>
+            <TaskList tasks={[]} />
+          </div>
+        </section>
+
+        {/* Task List Loading State Demo Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Task List (Loading State)</h2>
+          <div className="space-y-4">
+            <p className="text-foreground/70">
+              Demo of the TaskList component in loading state.
+            </p>
+            <TaskList tasks={[]} loading />
+          </div>
+        </section>
+        {/* Task List Error State Demo Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Task List (Error State)</h2>
+          <div className="space-y-4">
+            <p className="text-foreground/70">
+              Demo of the TaskList component in error state.
+            </p>
+            <TaskList tasks={[]} error="Network error: Please try again later." />
           </div>
         </section>
       </div>

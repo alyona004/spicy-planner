@@ -138,11 +138,31 @@
 - `src/app/design/page.tsx` — TaskCard demo section with interactive completion toggle and visual indicators
 
 ### 3.5 Task List/Grid Component
-- [ ] Create container for displaying all tasks
-- [ ] Implement grid/list view toggle
-- [ ] Add empty state for no tasks
-- [ ] Create loading states and error handling
-- [ ] Implement responsive layout
+- [x] Create container for displaying all tasks
+- [x] Add tab bar above the list/grid (Today active, Week/Goals disabled)
+- [x] Add energy filter controls above the list/grid
+- [x] Add prominent Add Task button above the list/grid (with random dopamine icon)
+- [x] Color TaskCard border by energy (high=green, medium=secondary, low=muted) and add drag handle icon
+- [x] Implement grid/list view toggle
+- [x] Add empty state for no tasks
+- [x] Create loading states and error handling
+- [x] Implement responsive layout
+
+**Files Created/Modified:**
+- `src/components/adhd-planner/task-list.tsx` — TaskList component rendering a vertical list or grid of TaskCards, passing through interactive completion toggles, and showing:
+  - Friendly empty state with icon and message
+  - Loading state (spinner, message)
+  - Error state (icon, message, details)
+  - Improved grid responsiveness and mobile-friendly spacing
+- `src/components/adhd-planner/task-card.tsx` — TaskCard border color now uses palette: high=green, medium=secondary, low=muted; drag handle icon added
+- `src/app/design/page.tsx` — TaskList demo section with:
+  - Multiple sample tasks and interactive completion toggles
+  - Tab bar above the list/grid (Today active, Week/Goals disabled)
+  - Energy filter controls (High, Medium, Low) above the list/grid
+  - Add Task button above the list/grid, with random dopamine-boosting icon
+  - TaskCard border color by energy and drag handle icon
+  - Grid/list view toggle for TaskList
+  - TaskList empty, loading, and error state demos
 
 ## 4. Core Functionality
 

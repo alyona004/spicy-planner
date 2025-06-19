@@ -29,6 +29,12 @@ const energyLabels = {
   high: { label: "High", emoji: "🚀" },
 };
 
+const energyBorder = {
+  high: "border-green-500",
+  medium: "border-secondary",
+  low: "border-muted",
+};
+
 const typeLabels = {
   daily: { label: "Daily", emoji: "🔄" },
   "one-time": { label: "One-time", emoji: "📝" },
@@ -45,7 +51,7 @@ export function TaskCard({ task, onToggleComplete }: TaskCardProps) {
   }
 
   return (
-    <Card className="p-4 flex flex-col gap-3 bg-white border border-muted shadow-sm transition-all duration-150 hover:bg-muted/40 hover:shadow-md focus-within:bg-muted/40 focus-within:shadow-md">
+    <Card className={`p-4 flex flex-col gap-3 bg-white border-2 shadow-sm transition-all duration-150 hover:bg-muted/40 hover:shadow-md focus-within:bg-muted/40 focus-within:shadow-md ${energyBorder[task.energy]}`}>
       <div className="flex items-center gap-2 min-w-0">
         <Checkbox
           checked={task.state === "done"}
@@ -65,6 +71,10 @@ export function TaskCard({ task, onToggleComplete }: TaskCardProps) {
         {task.state === "done" && (
           <Badge variant="success">Done</Badge>
         )}
+        {/* Drag Handle Icon */}
+        <span className="ml-2 cursor-grab text-muted-foreground" title="Drag task" aria-label="Drag task">
+          <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><circle cx="7" cy="6" r="1.5"/><circle cx="7" cy="10" r="1.5"/><circle cx="7" cy="14" r="1.5"/><circle cx="13" cy="6" r="1.5"/><circle cx="13" cy="10" r="1.5"/><circle cx="13" cy="14" r="1.5"/></svg>
+        </span>
       </div>
       <div className="flex flex-wrap gap-2 text-sm">
         <Badge
