@@ -87,10 +87,21 @@
 - `src/app/globals.css` — CSS variables for color palette
 
 ### 3.2 Header and Navigation
-- [ ] Create clean, minimal header component
-- [ ] Add navigation for different views (if needed)
-- [ ] Implement responsive design for mobile/desktop
-- [ ] Add accessibility features (ARIA labels, keyboard navigation)
+- [x] Create clean, minimal header component
+- [x] Add navigation for different views (if needed)
+- [x] Implement responsive design for mobile/desktop
+- [x] Add accessibility features (ARIA labels, keyboard navigation)
+
+**Files Created/Modified:**
+- `src/components/adhd-planner/header.tsx` — Clean header component with:
+  - Sticky positioning with backdrop blur
+  - Responsive navigation (desktop links, mobile menu button)
+  - ADHD-friendly focus indicators and hover states
+  - Accessible ARIA labels and keyboard navigation
+  - "🌶️ Planner" branding with hot pepper emoji
+- `src/app/layout.tsx` — Updated to include header and proper layout structure
+- `src/app/page.tsx` — Redesigned home page with hero section and features, updated branding
+- `src/app/planner/page.tsx` — Basic planner page with task management interface
 
 ### 3.3 Task Creation Form
 - [ ] Build modal or inline form for task creation
