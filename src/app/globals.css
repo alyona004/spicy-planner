@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply bg-white text-black;
+:root {
+  --primary: #7c3aed;
+  --secondary: #06b6d4;
+  --accent: #f472b6;
+  --background: #f3f4f6;
+  --foreground: #1e293b;
+  --muted: #e0e7ef;
+  --destructive: #f87171;
+  --color-border: #e5e7eb;
 }
