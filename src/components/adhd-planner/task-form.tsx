@@ -1,3 +1,5 @@
+"use client"
+
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card } from "@/components/ui/card";
 import { Alert } from "@/components/ui/alert";
 import { createTaskSchema, type CreateTaskFormData } from "@/types/forms";
+import { createTaskAction } from "@/app/actions";
 
 const dopamineIcons = [
   "🎉", "🚀", "✨", "🦄", "🌈", "🔥", "🍀", "🥳", "💡", "🏆"
@@ -30,21 +33,47 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [dopamineIcon, setDopamineIcon] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     setDopamineIcon(getRandomIcon());
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setSubmitError(null);
+    
     try {
+      // Validate the form data
       const validatedData = createTaskSchema.parse(formData);
       setErrors({});
-      onSubmit(validatedData);
+      
+      // Call the server action
+      const result = await createTaskAction(validatedData);
+      
+      if (result.success && result.data) {
+        // Call the parent onSubmit callback with the form data
+        onSubmit(validatedData);
+        // Reset form after successful submission
+        setFormData({
+          title: "",
+          block: "morning",
+          energy: "medium",
+          type: "one-time"
+        });
+      } else {
+        setSubmitError(result.error || "Failed to create task");
+      }
     } catch (error) {
       if (error instanceof Error) {
-        setErrors({ general: error.message });
+        setSubmitError(error.message);
+      } else {
+        setSubmitError("An unexpected error occurred");
       }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -52,6 +81,9 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }));
+    }
+    if (submitError) {
+      setSubmitError(null);
     }
   };
 
@@ -71,9 +103,9 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
           <h2 className="text-xl font-bold mb-4">Create New Task</h2>
         </div>
 
-        {errors.general && (
+        {submitError && (
           <Alert variant="destructive">
-            {errors.general}
+            {submitError}
           </Alert>
         )}
 
@@ -87,6 +119,7 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
             placeholder="What needs to be done?"
             className="w-full"
             required
+            disabled={isSubmitting}
           />
           {errors.title && (
             <p className="text-sm text-destructive">{errors.title}</p>
@@ -99,6 +132,7 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
           <Select
             value={formData.block}
             onValueChange={(value) => handleInputChange("block", value)}
+            disabled={isSubmitting}
           >
             <SelectTrigger className="bg-white border border-muted focus:ring-2 focus:ring-primary">
               <SelectValue placeholder="Select time block" />
@@ -120,6 +154,7 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
           <Select
             value={formData.energy}
             onValueChange={(value) => handleInputChange("energy", value)}
+            disabled={isSubmitting}
           >
             <SelectTrigger className="bg-white border border-muted focus:ring-2 focus:ring-primary">
               <SelectValue placeholder="Select energy level" />
@@ -141,6 +176,7 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
           <Select
             value={formData.type}
             onValueChange={(value) => handleInputChange("type", value)}
+            disabled={isSubmitting}
           >
             <SelectTrigger className="bg-white border border-muted focus:ring-2 focus:ring-primary">
               <SelectValue placeholder="Select task type" />
@@ -160,10 +196,10 @@ export function TaskForm({ onSubmit, onCancel, isLoading = false }: TaskFormProp
           <Button
             type="submit"
             className="text-lg gap-2"
-            disabled={isLoading}
+            disabled={isSubmitting || isLoading}
           >
             {dopamineIcon && <span aria-hidden>{dopamineIcon}</span>}
-            {isLoading ? "Creating..." : "Create Task"}
+            {isSubmitting ? "Creating..." : "Create Task"}
           </Button>
         </div>
       </form>

@@ -18,7 +18,7 @@ export function Header() {
         {/* Navigation */}
         <nav className="hidden md:flex items-center space-x-6">
           <Link 
-            href="/" 
+            href="/planner" 
             className="text-sm font-medium text-foreground/70 hover:text-foreground transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 rounded px-2 py-1"
           >
             Planner

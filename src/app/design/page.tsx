@@ -12,6 +12,7 @@ import { Tag } from "@/components/ui/tag";
 import { TaskForm } from "@/components/adhd-planner/task-form";
 import { TaskCard } from "@/components/adhd-planner/task-card";
 import { TaskList } from "@/components/adhd-planner/task-list";
+import { AddTaskButton } from "@/components/adhd-planner/add-task-button";
 import type { Task } from "@/types/task";
 import { useState, useEffect } from "react";
 
@@ -111,17 +112,6 @@ export default function DesignDemo() {
   const filteredTasks = energyFilters.length
     ? demoTasks.filter(task => energyFilters.includes(task.energy))
     : demoTasks;
-
-  const dopamineIcons = [
-    "🎉", "🚀", "✨", "🦄", "🌈", "🔥", "🍀", "🥳", "💡", "🏆"
-  ];
-  function getRandomIcon() {
-    return dopamineIcons[Math.floor(Math.random() * dopamineIcons.length)];
-  }
-  const [addTaskIcon, setAddTaskIcon] = useState<string | null>(null);
-  useEffect(() => {
-    setAddTaskIcon(getRandomIcon());
-  }, []);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -361,15 +351,7 @@ export default function DesignDemo() {
             </div>
             {/* + Add Task Button */}
             <div className="mb-2">
-              <button
-                type="button"
-                className="px-4 py-2 rounded-full bg-primary text-white font-bold text-base shadow hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary transition flex items-center gap-2"
-                onClick={() => console.log('Add Task clicked')}
-                aria-label="Add Task"
-              >
-                {addTaskIcon && <span aria-hidden>{addTaskIcon}</span>}
-                Add Task
-              </button>
+              <AddTaskButton onClick={() => console.log('Add Task clicked')} />
             </div>
             {/* End + Add Task Button */}
             <div className="flex gap-2 mb-2">
