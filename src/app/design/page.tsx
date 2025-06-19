@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -7,6 +9,7 @@ import { Alert } from "@/components/ui/alert";
 import { Divider } from "@/components/ui/divider";
 import { Section } from "@/components/ui/section";
 import { Tag } from "@/components/ui/tag";
+import { TaskForm } from "@/components/adhd-planner/task-form";
 
 const buttonVariants = [
   { variant: "default", label: "Default" },
@@ -28,6 +31,15 @@ const palette = [
 ];
 
 export default function DesignDemo() {
+  const handleTaskSubmit = (data: any) => {
+    console.log("Task submitted:", data);
+    alert(`Task created: ${data.title}`);
+  };
+
+  const handleTaskCancel = () => {
+    console.log("Task creation cancelled");
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-3xl mx-auto px-4 py-12 space-y-12">
@@ -176,6 +188,20 @@ export default function DesignDemo() {
                 <Tag variant="muted">Muted</Tag>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Task Form Demo Section */}
+        <section>
+          <h2 className="text-xl font-bold mb-4">Task Creation Form</h2>
+          <div className="space-y-4">
+            <p className="text-foreground/70">
+              Demo of the task creation form with all fields and validation.
+            </p>
+            <TaskForm 
+              onSubmit={handleTaskSubmit}
+              onCancel={handleTaskCancel}
+            />
           </div>
         </section>
       </div>

@@ -104,11 +104,22 @@
 - `src/app/planner/page.tsx` — Basic planner page with task management interface
 
 ### 3.3 Task Creation Form
-- [ ] Build modal or inline form for task creation
-- [ ] Implement form validation with Zod
-- [ ] Create form fields for all task properties
-- [ ] Add accessibility features and error handling
-- [ ] Style form with ADHD-friendly design principles
+- [x] Build modal or inline form for task creation
+- [x] Implement form validation with Zod
+- [x] Create form fields for all task properties
+- [x] Add accessibility features and error handling
+- [x] Style form with ADHD-friendly design principles
+
+**Files Created/Modified:**
+- `src/components/adhd-planner/task-form.tsx` — Task creation form with:
+  - White background, shadow, and border for separation
+  - All task fields (title, block, energy, type) with emojis and clear labels
+  - Zod validation and error display
+  - Select boxes styled with white background and border
+  - Dopamine-boosting random icon on the Create Task button
+  - X close button in the top-right corner
+  - Right-aligned action button (not centered or stretched)
+- `src/app/design/page.tsx` — Added TaskForm demo section for live preview and testing
 
 ### 3.4 Task Card Component
 - [ ] Design individual task card with all properties
