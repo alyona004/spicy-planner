@@ -33,6 +33,13 @@ export default function PlannerPage() {
 
   const handleCreateTask = async (formData: CreateTaskFormData) => {
     try {
+      // Check storage quota before creating task
+      const quotaCheck = localStorageService.checkStorageQuota()
+      if (!quotaCheck.available) {
+        setError(`Cannot create task: ${quotaCheck.message}. Please delete some tasks to free up space.`)
+        return
+      }
+
       // Call the server action
       const result = await createTaskAction(formData)
       
@@ -40,11 +47,22 @@ export default function PlannerPage() {
         // Add the new task to the UI
         setTasks(prev => [result.data!, ...prev])
         setShowTaskForm(false)
+        setError(null) // Clear any previous errors
       } else {
         console.error("Failed to create task:", result.error)
+        setError(result.error || "Failed to create task")
       }
     } catch (err) {
       console.error("Error creating task:", err)
+      if (err instanceof Error) {
+        if (err.message.includes('quota exceeded')) {
+          setError("Storage is full. Please delete some tasks to create new ones.")
+        } else {
+          setError(err.message)
+        }
+      } else {
+        setError("An unexpected error occurred")
+      }
     }
   }
 
@@ -64,8 +82,18 @@ export default function PlannerPage() {
     // Update in localStorage
     try {
       localStorageService.updateTask(updatedTask)
+      setError(null) // Clear any previous errors
     } catch (err) {
       console.error("Error updating task:", err)
+      if (err instanceof Error) {
+        if (err.message.includes('quota exceeded')) {
+          setError("Storage is full. Please delete some tasks to save changes.")
+        } else {
+          setError(err.message)
+        }
+      } else {
+        setError("Failed to save task changes")
+      }
       // Revert the UI change on error
       setTasks(prev => prev.map(task => 
         task.id === taskId ? taskToUpdate : task

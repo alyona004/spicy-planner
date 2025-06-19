@@ -133,10 +133,24 @@ class LocalStorageService {
         throw new Error(`Cannot save: ${invalidCount} tasks are invalid`)
       }
       
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(validTasks))
+      const tasksJson = JSON.stringify(validTasks)
+      
+      // Check available storage space before saving
+      try {
+        const testKey = 'spicy-planner-test'
+        localStorage.setItem(testKey, tasksJson)
+        localStorage.removeItem(testKey)
+      } catch (quotaError) {
+        if (quotaError instanceof Error && quotaError.name === 'QuotaExceededError') {
+          throw new Error('Storage quota exceeded. Please delete some tasks to free up space.')
+        }
+        throw quotaError
+      }
+      
+      localStorage.setItem(STORAGE_KEY, tasksJson)
     } catch (error) {
       console.error('Error writing tasks to localStorage:', error)
-      throw new Error('Failed to save tasks to localStorage')
+      throw error
     }
   }
 
@@ -201,6 +215,61 @@ class LocalStorageService {
 
   saveTasks(tasks: Task[]): void {
     this.setTasks(tasks)
+  }
+
+  clearAllTasks(): void {
+    try {
+      if (typeof window === 'undefined') return
+      
+      localStorage.removeItem(STORAGE_KEY)
+      localStorage.removeItem(VERSION_KEY)
+    } catch (error) {
+      console.error('Error clearing tasks from localStorage:', error)
+      throw new Error('Failed to clear tasks from localStorage')
+    }
+  }
+
+  // Check available storage space
+  checkStorageQuota(): { available: boolean; message?: string } {
+    try {
+      if (typeof window === 'undefined') {
+        return { available: false, message: 'localStorage not available' }
+      }
+      
+      const testKey = 'spicy-planner-quota-test'
+      const testData = 'x'.repeat(1024) // 1KB test data
+      
+      try {
+        localStorage.setItem(testKey, testData)
+        localStorage.removeItem(testKey)
+        return { available: true }
+      } catch (quotaError) {
+        if (quotaError instanceof Error && quotaError.name === 'QuotaExceededError') {
+          return { available: false, message: 'Storage quota exceeded' }
+        }
+        return { available: false, message: 'Storage access denied' }
+      }
+    } catch (error) {
+      return { available: false, message: 'Storage check failed' }
+    }
+  }
+
+  // Get current storage usage
+  getStorageUsage(): { used: number; available: boolean } {
+    try {
+      if (typeof window === 'undefined') {
+        return { used: 0, available: false }
+      }
+      
+      const stored = localStorage.getItem(STORAGE_KEY)
+      const used = stored ? new Blob([stored]).size : 0
+      const { available } = this.checkStorageQuota()
+      
+      return { used, available }
+    } catch (error) {
+      console.error('Error getting storage usage:', error)
+      return { used: 0, available: false }
+    }
   }
 }
 
