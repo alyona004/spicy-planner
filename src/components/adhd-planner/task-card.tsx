@@ -155,14 +155,14 @@ export function TaskCard({ task, onToggleComplete }: TaskCardProps) {
         ${isCompleted ? 'opacity-60' : 'opacity-100'}
       `}>
         <Badge
-          variant={blockVariants[task.block] as any}
+          variant={blockVariants[task.block] as "primary" | "secondary"}
           aria-label={`Time block: ${blockLabels[task.block].label}`}
           className="transition-transform duration-200 hover:scale-105"
         >
           {blockLabels[task.block].emoji} {blockLabels[task.block].label}
         </Badge>
         <Badge
-          variant={energyVariants[task.energy] as any}
+          variant={energyVariants[task.energy] as "muted" | "secondary" | "success"}
           aria-label={`Energy level: ${energyLabels[task.energy].label}`}
           className="transition-transform duration-200 hover:scale-105"
         >

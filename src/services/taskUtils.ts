@@ -30,7 +30,7 @@ export function createTimestamp(): string {
   return new Date().toISOString()
 }
 
-export function getTaskValidationErrors(task: any): string[] {
+export function getTaskValidationErrors(task: unknown): string[] {
   const errors: string[] = []
   
   if (typeof task !== 'object' || task === null) {
@@ -38,25 +38,27 @@ export function getTaskValidationErrors(task: any): string[] {
     return errors
   }
   
-  if (typeof task.id !== 'string') errors.push('Invalid id')
-  if (typeof task.title !== 'string') errors.push('Invalid title')
-  if (!['pending', 'done'].includes(task.state)) errors.push('Invalid state')
-  if (!['morning', 'afternoon', 'evening'].includes(task.block)) errors.push('Invalid block')
-  if (!['low', 'medium', 'high'].includes(task.energy)) errors.push('Invalid energy')
-  if (!['daily', 'one-time'].includes(task.type)) errors.push('Invalid type')
-  if (typeof task.created_time !== 'string') errors.push('Invalid created_time')
+  const taskObj = task as Record<string, unknown>
+  
+  if (typeof taskObj.id !== 'string') errors.push('Invalid id')
+  if (typeof taskObj.title !== 'string') errors.push('Invalid title')
+  if (!['pending', 'done'].includes(taskObj.state as string)) errors.push('Invalid state')
+  if (!['morning', 'afternoon', 'evening'].includes(taskObj.block as string)) errors.push('Invalid block')
+  if (!['low', 'medium', 'high'].includes(taskObj.energy as string)) errors.push('Invalid energy')
+  if (!['daily', 'one-time'].includes(taskObj.type as string)) errors.push('Invalid type')
+  if (typeof taskObj.created_time !== 'string') errors.push('Invalid created_time')
   
   return errors
 }
 
-export function validateTask(task: any): task is Task {
+export function validateTask(task: unknown): task is Task {
   return getTaskValidationErrors(task).length === 0
 }
 
 export function sortTasks(tasks: Task[], field: keyof Task, direction: 'asc' | 'desc' = 'asc'): Task[] {
   return [...tasks].sort((a, b) => {
-    let aValue: any = a[field]
-    let bValue: any = b[field]
+    let aValue: string | number = a[field] as string | number
+    let bValue: string | number = b[field] as string | number
     
     // Handle string comparisons
     if (typeof aValue === 'string' && typeof bValue === 'string') {
@@ -66,8 +68,8 @@ export function sortTasks(tasks: Task[], field: keyof Task, direction: 'asc' | '
     
     // Handle date comparisons
     if (field === 'created_time') {
-      aValue = new Date(aValue).getTime()
-      bValue = new Date(bValue).getTime()
+      aValue = new Date(aValue as string).getTime()
+      bValue = new Date(bValue as string).getTime()
     }
     
     if (aValue < bValue) return direction === 'asc' ? -1 : 1

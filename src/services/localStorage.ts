@@ -28,22 +28,23 @@ class LocalStorageService {
     }
   }
 
-  private migrateData(tasks: any[], fromVersion: number): Task[] {
+  private migrateData(tasks: unknown[], fromVersion: number): Task[] {
     console.log(`Migrating data from version ${fromVersion} to ${CURRENT_VERSION}`)
     
     // Version 0 to 1: Ensure all tasks have required fields
     if (fromVersion < 1) {
       tasks = tasks.map(task => {
         if (typeof task === 'object' && task !== null) {
+          const taskObj = task as Record<string, unknown>
           return {
-            id: task.id || crypto.randomUUID(),
-            title: task.title || 'Untitled Task',
-            state: ['pending', 'done'].includes(task.state) ? task.state : 'pending',
-            block: ['morning', 'afternoon', 'evening'].includes(task.block) ? task.block : 'morning',
-            energy: ['low', 'medium', 'high'].includes(task.energy) ? task.energy : 'medium',
-            type: ['daily', 'one-time'].includes(task.type) ? task.type : 'one-time',
-            created_time: task.created_time || new Date().toISOString()
-          }
+            id: (taskObj.id as string) || crypto.randomUUID(),
+            title: (taskObj.title as string) || 'Untitled Task',
+            state: ['pending', 'done'].includes(taskObj.state as string) ? (taskObj.state as string) : 'pending',
+            block: ['morning', 'afternoon', 'evening'].includes(taskObj.block as string) ? (taskObj.block as string) : 'morning',
+            energy: ['low', 'medium', 'high'].includes(taskObj.energy as string) ? (taskObj.energy as string) : 'medium',
+            type: ['daily', 'one-time'].includes(taskObj.type as string) ? (taskObj.type as string) : 'one-time',
+            created_time: (taskObj.created_time as string) || new Date().toISOString()
+          } as Task
         }
         return task
       })
@@ -52,7 +53,7 @@ class LocalStorageService {
     // Future migrations can be added here
     // if (fromVersion < 2) { ... }
     
-    return tasks
+    return tasks as Task[]
   }
 
   private getTasks(): Task[] {
@@ -249,7 +250,7 @@ class LocalStorageService {
         }
         return { available: false, message: 'Storage access denied' }
       }
-    } catch (error) {
+    } catch {
       return { available: false, message: 'Storage check failed' }
     }
   }
@@ -266,8 +267,8 @@ class LocalStorageService {
       const { available } = this.checkStorageQuota()
       
       return { used, available }
-    } catch (error) {
-      console.error('Error getting storage usage:', error)
+    } catch {
+      console.error('Error getting storage usage')
       return { used: 0, available: false }
     }
   }

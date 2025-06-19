@@ -14,7 +14,8 @@ import { TaskCard } from "@/components/adhd-planner/task-card";
 import { TaskList } from "@/components/adhd-planner/task-list";
 import { AddTaskButton } from "@/components/adhd-planner/add-task-button";
 import type { Task } from "@/types/task";
-import { useState, useEffect } from "react";
+import type { CreateTaskFormData } from "@/types/forms";
+import { useState } from "react";
 
 const buttonVariants = [
   { variant: "default", label: "Default" },
@@ -36,7 +37,7 @@ const palette = [
 ];
 
 export default function DesignDemo() {
-  const handleTaskSubmit = (data: any) => {
+  const handleTaskSubmit = (data: CreateTaskFormData) => {
     console.log("Task submitted:", data);
     alert(`Task created: ${data.title}`);
   };
@@ -179,7 +180,7 @@ export default function DesignDemo() {
             {buttonVariants.map(({ variant, label }) => (
               <div key={variant} className="flex flex-col gap-1">
                 <span className="text-xs text-muted-foreground">{label} Button</span>
-                <Button variant={variant as any}>
+                <Button variant={variant as "default" | "destructive" | "outline" | "secondary" | "ghost" | "link"}>
                   {variant === "default" ? "🌈 Focus Button" : `${label} Button`}
                 </Button>
               </div>

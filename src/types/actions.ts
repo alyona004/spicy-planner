@@ -1,6 +1,6 @@
 import { Task } from './task'
 
-export interface ActionResponse<T = any> {
+export interface ActionResponse<T = unknown> {
   success: boolean
   data?: T
   error?: string

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 
 interface AddTaskButtonProps {
   onClick: () => void
@@ -9,16 +9,16 @@ interface AddTaskButtonProps {
 
 export function AddTaskButton({ onClick, className = "" }: AddTaskButtonProps) {
   // Dopamine icons for the add task button
-  const dopamineIcons = [
+  const dopamineIcons = useMemo(() => [
     "🎉", "🚀", "✨", "🦄", "🌈", "🔥", "🍀", "🥳", "💡", "🏆"
-  ]
+  ], [])
   const [addTaskIcon, setAddTaskIcon] = useState<string | null>(null)
 
   // Set random dopamine icon on mount
   useEffect(() => {
     const randomIcon = dopamineIcons[Math.floor(Math.random() * dopamineIcons.length)]
     setAddTaskIcon(randomIcon)
-  }, [])
+  }, [dopamineIcons])
 
   return (
     <button

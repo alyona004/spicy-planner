@@ -1,13 +1,10 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Section } from "@/components/ui/section"
-import { Button } from "@/components/ui/button"
 import { TaskForm } from "@/components/adhd-planner/task-form"
 import { TaskList } from "@/components/adhd-planner/task-list"
 import { AddTaskButton } from "@/components/adhd-planner/add-task-button"
 import { localStorageService } from "@/services/localStorage"
-import { createTaskAction } from "@/app/actions"
 import { Task, type TaskState } from "@/types/task"
 import type { CreateTaskFormData } from "@/types/forms"
 
@@ -16,7 +13,7 @@ export default function PlannerPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [showTaskForm, setShowTaskForm] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [taskListView, setTaskListView] = useState<'list' | 'grid'>('list')
+  const [taskListView] = useState<'list' | 'grid'>('list')
   const [energyFilters, setEnergyFilters] = useState<('high' | 'medium' | 'low')[]>([])
 
   // Load tasks from localStorage on component mount
@@ -40,18 +37,24 @@ export default function PlannerPage() {
         return
       }
 
-      // Call the server action
-      const result = await createTaskAction(formData)
-      
-      if (result.success && result.data) {
-        // Add the new task to the UI
-        setTasks(prev => [result.data!, ...prev])
-        setShowTaskForm(false)
-        setError(null) // Clear any previous errors
-      } else {
-        console.error("Failed to create task:", result.error)
-        setError(result.error || "Failed to create task")
+      // Create task directly in localStorage (client-side)
+      const newTask: Task = {
+        id: crypto.randomUUID(),
+        title: formData.title,
+        state: "pending",
+        block: formData.block,
+        energy: formData.energy,
+        type: formData.type,
+        created_time: new Date().toISOString()
       }
+
+      // Save to localStorage
+      const savedTask = localStorageService.createTask(newTask)
+      
+      // Add the new task to the UI
+      setTasks(prev => [savedTask, ...prev])
+      setShowTaskForm(false)
+      setError(null) // Clear any previous errors
     } catch (err) {
       console.error("Error creating task:", err)
       if (err instanceof Error) {
